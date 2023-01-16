@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 
 	"github.com/DumbBoi/websays-test/models"
@@ -10,7 +10,7 @@ import (
 
 func createArticle(c *gin.Context) {
 	var (
-		request models.CreateArticleRequest
+		request models.ArticleRequest
 		err     error
 	)
 
@@ -20,14 +20,36 @@ func createArticle(c *gin.Context) {
 		c.JSON(500, err.Error())
 		return
 	}
-	art, _ := models.CreateArticle(request)
-	fmt.Println(art.Id)
-	fmt.Println(art.Title)
-	fmt.Println(art.Categories)
+	models.CreateArticle(request)
 }
+
+func ReadAritcle(c *gin.Context) {
+	var (
+		err     error
+		request struct {
+			key string
+		}
+	)
+	err = c.BindJSON(&request)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(500, err.Error())
+		return
+	}
+	art := models.ReadAritcle(request.key)
+	output, err := json.Marshal(art)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, output)
+}
+
 func main() {
 	router := gin.Default()
 	router.POST("/article", createArticle)
+	router.GET("/article", ReadAritcle)
 
 	router.Run("localhost:8080")
 }
