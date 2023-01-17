@@ -27,7 +27,7 @@ func articleRequestToArticle(request ArticleRequest) article {
 	for _, catstr := range request.Category {
 		cat, ok := GetCategory(catstr)
 		if !ok {
-			cat, _ = CreateCategory(catstr)
+			cat, _ = CreateCategory(catstr, "")
 		}
 		art.Categories = append(art.Categories, cat)
 	}
@@ -51,10 +51,13 @@ func ReadAritcle(key string) article {
 	return art
 }
 
-func UpdateAritcle() {
-
+func UpdateArticle(request ArticleRequest) (article, error) {
+	art := articleRequestToArticle(request)
+	dbs.RedisWrite(art.Title, art, redisCleint)
+	return art, nil
 }
 
-func DeleteAritcle() {
-
+func DeleteAritcle(title string) error {
+	dbs.RedisWrite(title, nil, redisCleint)
+	return nil
 }

@@ -51,5 +51,10 @@ func main() {
 	router.POST("/article", createArticle)
 	router.GET("/article", ReadAritcle)
 
+	router.POST("/category", createArticle)
+	router.GET("/category", ReadAritcle)
+	router.DELETE("/category", createArticle)
+	router.PUT("/category", createArticle)
+
 	router.Run("localhost:8080")
 }
